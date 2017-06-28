@@ -1,0 +1,4 @@
+Mesh
+====
+
+.. automodule:: nutils.mesh

@@ -1,0 +1,4 @@
+Debug
+=====
+
+.. automodule:: nutils.debug

@@ -1,0 +1,4 @@
+Topology
+========
+
+.. automodule:: nutils.topology

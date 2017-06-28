@@ -1,0 +1,167 @@
+Changelog
+=========
+
+Nutils is under active development and the API is not frozen. Active
+users are advised to keep an eye on this file to stay up to date with
+the most prominent user-facing changes.
+
+
+Deprecated: cli.Path
+
+  The cli.Path wrapper is deprecated in favor of pathlib.Path.
+
+New: cli module
+
+  The util.run function is deprecated and replaced by two new functions,
+  cli.choose and cli.run. The new functions are very similar to the
+  original, but have a few notable differences:
+
+    * cli.choose requires the name of the function to be executed
+      (typically 'main'), followed by any optional arguments
+    * cli.run does not require the name of the function to be executed,
+      but only a single one can be specified
+    * argument conversions follow the type of the argument's default
+      value, instead of the result of `eval`
+    * the --tbexplore option for post-mortem debugging is replaced by
+      --pdb, replacing Nutils' own traceback explorer by Python's
+      builtin debugger
+    * on-line debugging is provided via the ctrl+c signal handler
+    * function annotations can be used to describe arguments in both
+      help messages and logging output (see examples/*)
+    * path arguments can be made absolute and converted to a
+      pathlib.Path object by using the cli.Path wrapper class
+
+  For example, the new invocation for the Laplace example problem (which
+  uses cli.choose) on 4 elements with post-mortem debugging enabled, is:
+
+  $ examples/laplace.py --pdb main --nelems=4
+
+
+New: model
+
+  The model module provides infrastructure to facilitate formulating and
+  solving complicated nonlinear problems in a structured and largely
+  automated fashion. See that model documentation and the updated
+  finitestrain code for examples.
+
+
+Changed: pariter, parmap
+
+  The parellel.pariter and parellel.parmap functions now require the
+  desired number of processors to be explicitly requested through the
+  'nprocs' argument. The parallel.shzeros function always returns an
+  shared memory regardless of the value of the global nprocs property,
+  which is no longer referenced in the parallel module.
+
+
+New: topology.with{subdomain,boundary,interfaces,points}
+
+  Topologies have been made fully immutable, which means that the old
+  setitem operation is no longer supported. Instead, to add a
+  subtopology to the domain, its boundary, its interfaces, or points,
+  any of the methods .withsubdomain, .withboundary, .withinterfaces, and
+  .withpoints, respectively, will return a copy of the topology with the
+  desired groups added.
+
+  Removed syntax:
+  >> domain.boundary['wall'] = domain.boundary['left,top']
+
+  New:
+  >> domain = domain.withboundary( wall=domain.boundary['left,top'] )
+  >> domain.boundary['wall'].integrate( ... )
+
+  Alternative:
+  >> domain = domain.withboundary( wall='left,top' )
+
+
+New: circular symmetry
+
+  Any topology can be revolved using the new .revolved method, which
+  interprets the first geometry dimension as a radius and replaces it by
+  two new dimensions, shifting the remaining axes backward. In addition
+  to the modified topology and geometry, simplifying function is
+  returned as the third return value which replaces all occurrences of
+  the revolution angle by zero. This should only be used after all
+  gradients have been computed, typically in integrate or elem_eval.
+
+  >> rdomain, rgeom, simplify = domain.revolved( geom )
+  >> basis = rdomain.basis( 'spline', degree=2 )
+  >> M = function.outer( basis.grad(rgeom) ).sum(-1)
+  >> rdomain.integrate(M, geometry=rgeom, ischeme='gauss2', edit=simplify)
+
+
+Changed: supp
+
+  The function.supp convenience function to find the supporting elements
+  of certain basis vectors has been deprecated. In its place is the much
+  more robust Topology.supp method, which search for supporting elements
+  within a topology. In addition to this the selection can be made as an
+  index vector or boolean mask, as in the following typical example:
+
+  >> v = domain.integrate(basis*coeffs, geometry=geom, ischeme='gauss2')
+  >> supp = domain.supp( basis, abs(v) > threshold )
+  >> domain.refined_by( supp )
+
+
+Removed: pointdata
+
+  The deprecated function.Pointdata is removed. The replacing
+  construction is Topology.elem_eval with the asfunction=True argument:
+
+  >>> f_pnt = domain.elem_eval( f, ischeme='gauss2', asfunction=True )
+  >>> domain.integrate( f - f_pnt, geometry=geom, ischeme='gauss2' ) == 0
+
+
+Changed: renamed mesh.gmesh to mesh.gmsh; added support for periodicy
+
+  The gmsh importer was unintentionally misnamed as gmesh; this has been
+  fixed. With that the old name is deprecated and will be removed in
+  future. In addition, support for the non-physical mesh format and
+  externally supplied boundary labels has been removed (see the unit
+  test tests/mesh.py for examples of valid .geo format). Support is
+  added for periodicity and interface groups.
+
+
+Changed: function.Inflate, function.DofMap; removed IntVector
+
+  The Inflate class takes a new length argument for the inflated shape.
+  The dofmap argument is now a generic int-array function, which removes
+  the need for a separate IntVector object; DofMap now derives directly
+  from Array.
+
+
+Changed: renamed ElemFunc to LocalCoords
+
+  Besides the name change the new object is derived from
+  DerivativeTargetBase so that it can be used as a derivate target,
+  removing the need for a 'localcoords' special token.
+
+
+Changed: function.asarray
+
+  Formerly asarray returned non-evaluable objects as numpy arrays. The
+  new implementation always returns a nutils Array, wrapping constant
+  objects in function.Constant.
+
+
+New: function.Constant
+
+  Wrapper object that returns a numpy array through evalf, introducing a
+  singleton point axis at location 0.
+
+
+New: function.Array with dtype; deprecates function.ArrayFunc
+
+  ArrayFunc is deprecated and will be removed. The new Array base class
+  is identical to ArrayFunc except for the mandatory argument 'dtype',
+  which takes a value of float, int, or bool.
+
+
+Release history
+---------------
+
+2016-02-18 Released v2.0 "Chuka men"
+2014-08-04 Released v1.0 "Bakmi"
+
+
+vim:textwidth=72

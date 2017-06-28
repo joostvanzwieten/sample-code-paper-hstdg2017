@@ -1,0 +1,4 @@
+Util
+====
+
+.. automodule:: nutils.util

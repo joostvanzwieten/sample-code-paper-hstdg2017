@@ -11,8 +11,10 @@ Requirements
 ------------
 
 The code requires Python 3.5 or higher — version 3.4 might work as well, but is
-not tested — and Nutils 3, which is at the time of writing available as beta on
-[github][Nutils-repo].
+not tested — [NumPy], [SciPy], [Matplotlib] and Nutils 3.  The specific version
+of Nutils that is used to test the sample code is included in this package in
+the `third-party` directory and is automatically chosen over an installed
+version of Nutils.
 
 Examples
 --------
@@ -35,4 +37,6 @@ for test-case-specific options.
 [hstdg2017]: https://doi.org/10.1016/j.compfluid.2017.06.010
 [Python]: https://www.python.org/
 [Nutils]: http://nutils.org/
-[Nutils-repo]: https://github.com/nutils/nutils
+[NumPy]: http://www.numpy.org/
+[SciPy]: https://scipy.org/
+[Matplotlib]: https://matplotlib.org/

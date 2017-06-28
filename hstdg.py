@@ -20,6 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# Use packaged version of Nutils.  Remove the following three statements if you want
+# to use an installed version of Nutils.
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'third-party', 'nutils'))
+
 import itertools
 import math
 import matplotlib.colors

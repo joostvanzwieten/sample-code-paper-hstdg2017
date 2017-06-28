@@ -7,6 +7,8 @@ one-dimensional two-phase flow with a high-order h-adaptive space-time
 Discontinuous Galerkin method*][hstdg2017].  The code is written in [Python]
 and uses the Finite Element library [Nutils].
 
+The latest version of the sample code is available on [github][hstdg2017-repo].
+
 Requirements
 ------------
 
@@ -35,6 +37,7 @@ for Nutils-specific options and
 for test-case-specific options.
 
 [hstdg2017]: https://doi.org/10.1016/j.compfluid.2017.06.010
+[hstdg2017-repo]: https://github.com/joostvanzwieten/sample-code-paper-hstdg2017
 [Python]: https://www.python.org/
 [Nutils]: http://nutils.org/
 [NumPy]: http://www.numpy.org/
